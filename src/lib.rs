@@ -76,6 +76,7 @@ mod tests {
         assert_eq!(output, String::from("((a(unbound) b(unbound)) b(unbound))"));
     }
 
+    // The u combinator is the same thing as the omega combinator so no need to test it.
     #[test]
     fn it_evaluates_the_omega_combinator() {
         let output = eval(String::from("((λx.(x x)) y)"));
