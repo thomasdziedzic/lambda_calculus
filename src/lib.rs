@@ -63,4 +63,12 @@ mod tests {
         let output = eval(String::from("((((λx.(λy.(λz.(x (y z))))) f) g) h)"));
         assert_eq!(output, String::from("(f(unbound) (g(unbound) h(unbound)))"));
     }
+
+    // The y combinator is an infinite loop that will cause the stack to overflow.
+    // Ignore for now until we can figure out the best way to test this.
+    #[test] #[ignore]
+    fn it_evaluates_the_y_combinator() {
+        let output = eval(String::from("(λg.((λx.(g (x x))) (λx.(g (x x)))))"));
+        assert_eq!(output, String::from(""));
+    }
 }
