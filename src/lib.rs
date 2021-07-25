@@ -59,7 +59,7 @@ mod tests {
     }
 
     #[test]
-    fn it_evaluates_the_c_combinator() {
+    fn it_evaluates_the_b_combinator() {
         let output = eval(String::from("((((λx.(λy.(λz.(x (y z))))) f) g) h)"));
         assert_eq!(output, String::from("(f(unbound) (g(unbound) h(unbound)))"));
     }
