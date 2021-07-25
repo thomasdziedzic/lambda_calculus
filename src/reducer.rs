@@ -91,4 +91,13 @@ mod tests {
         let expected = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
         assert_eq!(expected, *reduced);
     }
+
+    #[test]
+    fn it_beta_reduces_in_nested_abstractions() {
+        let (_input, term) = parse("(((λx.(λy.x)) (λx.x)) z)").unwrap();
+        let dterm = de_bruijn_index(term);
+        let reduced = beta_reduction(beta_reduction(Rc::new(dterm)));
+        let expected = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
+        assert_eq!(expected, *reduced);
+    }
 }
