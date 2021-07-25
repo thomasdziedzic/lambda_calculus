@@ -41,7 +41,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_evaluates_a_term() {
+    fn it_evaluates_the_identity_combinator() {
         let output = eval(String::from("((λx.x) y)"));
         assert_eq!(output, String::from("y(unbound)"));
     }
