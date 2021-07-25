@@ -35,3 +35,14 @@ pub fn read_eval_print() {
     let output = eval(input);
     println!("{}", output);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_evaluates_a_term() {
+        let output = eval(String::from("((λx.x) y)"));
+        assert_eq!(output, String::from("y(unbound)"));
+    }
+}
