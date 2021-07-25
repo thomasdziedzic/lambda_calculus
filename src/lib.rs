@@ -45,4 +45,16 @@ mod tests {
         let output = eval(String::from("((λx.x) y)"));
         assert_eq!(output, String::from("y(unbound)"));
     }
+
+    #[test]
+    fn it_evaluates_the_omega_combinator() {
+        let output = eval(String::from("((λx.(x x)) y)"));
+        assert_eq!(output, String::from("(y(unbound) y(unbound))"));
+    }
+
+    #[test]
+    fn it_evaluates_the_big_omega_combinator() {
+        let output = eval(String::from("((λx.(x x)) (λx.(x x)))"));
+        assert_eq!(output, String::from("((λ.(x(0) x(0))) (λ.(x(0) x(0))))"));
+    }
 }
