@@ -1,4 +1,4 @@
-use crate::parser::Term;
+use crate::desugar::Term;
 use std::{fmt, rc::Rc, vec::Vec};
 
 /*
@@ -70,7 +70,7 @@ fn _de_bruijn_index<'a>(term: Term<'a>, context: &mut Context<'a>) -> DTerm<'a> 
             let ldterm = _de_bruijn_index(*left, context);
             let rdterm = _de_bruijn_index(*right, context);
             DTerm::DApp(Rc::new(ldterm), Rc::new(rdterm))
-        }
+        },
     }
 }
 
@@ -84,11 +84,12 @@ pub fn de_bruijn_index(term: Term) -> DTerm {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::parser::parse;
+    use crate::{desugar::desugar, parser::parse};
 
     #[test]
     fn it_handles_unbound_variables() {
         let (_input, term) = parse("x").unwrap();
+        let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DUVar("x");
         assert_eq!(expected, dterm);
@@ -97,6 +98,7 @@ mod tests {
     #[test]
     fn it_handles_abstraction_with_bound_variable() {
         let (_input, term) = parse("(λx.x)").unwrap();
+        let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
         assert_eq!(expected, dterm);
@@ -105,6 +107,7 @@ mod tests {
     #[test]
     fn it_handles_application() {
         let (_input, term) = parse("(x y)").unwrap();
+        let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let unbound_x = DTerm::DUVar("x");
         let unbound_y = DTerm::DUVar("y");
@@ -115,6 +118,7 @@ mod tests {
     #[test]
     fn it_handles_all_forms_at_once() {
         let (_input, term) = parse("((λx.x) y)").unwrap();
+        let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected_abs = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
         let unbound_y = DTerm::DUVar("y");
@@ -125,6 +129,7 @@ mod tests {
     #[test]
     fn it_handles_multiple_bound_variables() {
         let (_input, term) = parse("(λx.(λy.x))").unwrap();
+        let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DAbs(Rc::new(DTerm::DAbs(Rc::new(DTerm::DBVar("x", 1)))));
         assert_eq!(expected, dterm);

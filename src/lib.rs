@@ -4,8 +4,10 @@ use std::rc::Rc;
 use de_bruijn::de_bruijn_index;
 use parser::parse;
 use reducer::{beta_reduction, eta_reduction};
+use desugar::desugar;
 
 pub mod parser;
+pub mod desugar;
 pub mod de_bruijn;
 pub mod reducer;
 
@@ -17,6 +19,7 @@ fn read() -> String {
 
 fn eval(input: String) -> String {
     let (_input, term) = parse(&input[..]).unwrap();
+    let term = desugar(term);
 
     let mut previous = Rc::new(de_bruijn_index(term));
 
