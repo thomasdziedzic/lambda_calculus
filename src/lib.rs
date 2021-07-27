@@ -99,4 +99,15 @@ mod tests {
         let output = eval(String::from("(λg.((λx.(g (x x))) (λx.(g (x x)))))"));
         assert_eq!(output, String::from(""));
     }
+
+    #[test]
+    fn it_handles_booleans() {
+        let output = eval(String::from("
+            let TRUE = (λx.(λy.x)) in
+            let FALSE = (λx.(λy.y)) in
+            let AND = (λp.(λq.((p q) p))) in
+            ((AND TRUE) FALSE)
+            "));
+        assert_eq!(output, String::from("(λ.(λ.y(0)))"));
+    }
 }
