@@ -110,4 +110,18 @@ mod tests {
             "));
         assert_eq!(output, String::from("(λ.(λ.y(0)))"));
     }
+
+    #[test]
+    fn it_handles_church_numerals() {
+        let output = eval(String::from("
+            let zero = (λf.(λx.x)) in
+            let succ = (λn.(λf.(λx.(f ((n f) x))))) in
+            let one = (succ zero) in
+            let two = (succ one) in
+            let three = (succ two) in
+            let plus = (λm.(λn.(λf.(λx.((m f) ((n f) x)))))) in
+            ((plus two) three)
+            "));
+        assert_eq!(output, String::from("(λ.(λ.(f(1) (f(1) (f(1) (f(1) (f(1) x(0))))))))"));
+    }
 }
