@@ -140,4 +140,10 @@ mod tests {
             "));
         assert_eq!(output, String::from("(λ.((f(0) (λ.(λ.(f(1) x(0))))) (λ.(λ.x(0)))))"));
     }
+
+    #[test]
+    fn it_can_evaluate_a_y_combinator_with_a_terminating_function() {
+        let output = eval(String::from("((λg.((λx.(g (x x))) (λx.(g (x x))))) (λx.(λy.y)))"));
+        assert_eq!(output, String::from("(λ.y(0))"));
+    }
 }
