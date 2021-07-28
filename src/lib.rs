@@ -92,12 +92,10 @@ mod tests {
         assert_eq!(output, String::from("((λ.(x(0) x(0))) (λ.(x(0) x(0))))"));
     }
 
-    // The y combinator is an infinite loop that will cause the stack to overflow.
-    // Ignore for now until we can figure out the best way to test this.
-    #[test] #[ignore]
-    fn it_evaluates_the_y_combinator() {
-        let output = eval(String::from("(λg.((λx.(g (x x))) (λx.(g (x x)))))"));
-        assert_eq!(output, String::from(""));
+    #[test]
+    fn it_can_evaluate_a_y_combinator_with_a_terminating_function() {
+        let output = eval(String::from("((λg.((λx.(g (x x))) (λx.(g (x x))))) (λx.(λy.y)))"));
+        assert_eq!(output, String::from("(λ.y(0))"));
     }
 
     #[test]
@@ -139,11 +137,5 @@ mod tests {
             (flip nums)
             "));
         assert_eq!(output, String::from("(λ.((f(0) (λ.(λ.(f(1) x(0))))) (λ.(λ.x(0)))))"));
-    }
-
-    #[test]
-    fn it_can_evaluate_a_y_combinator_with_a_terminating_function() {
-        let output = eval(String::from("((λg.((λx.(g (x x))) (λx.(g (x x))))) (λx.(λy.y)))"));
-        assert_eq!(output, String::from("(λ.y(0))"));
     }
 }
