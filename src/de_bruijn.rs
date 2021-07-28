@@ -55,12 +55,7 @@ fn _de_bruijn_index<'a>(term: Term<'a>, context: &mut Context<'a>) -> DTerm<'a> 
             }
         },
         Term::Abs(binder, body) => {
-            match *binder {
-                Term::Var(bound_variable) => {
-                    context.binders.push(bound_variable);
-                },
-                _ => panic!("Expected a bound variable in a lambda abstraction.")
-            }
+            context.binders.push(binder);
 
             let dbody = _de_bruijn_index(*body, context);
             context.binders.pop();

@@ -12,7 +12,7 @@ use nom::{
 #[derive(Debug,PartialEq)]
 pub enum AST<'a> {
     Var(&'a str),
-    Abs(Box<AST<'a>>, Box<AST<'a>>),
+    Abs(&'a str, Box<AST<'a>>),
     App(Box<AST<'a>>, Box<AST<'a>>),
     Let(&'a str, Box<AST<'a>>, Box<AST<'a>>),
 }
@@ -25,14 +25,14 @@ fn variable(input: &str) -> IResult<&str, AST> {
     map_res(alpha1, from_variable)(input)
 }
 
-fn from_abstraction<'a>(input: (char, AST<'a>, char, AST<'a>)) -> Result<AST<'a>, &'a str> {
+fn from_abstraction<'a>(input: (char, &'a str, char, AST<'a>)) -> Result<AST<'a>, &'a str> {
     let (_, v, _, t) = input;
-    Ok(AST::Abs(Box::new(v), Box::new(t)))
+    Ok(AST::Abs(v, Box::new(t)))
 }
 
 fn abstraction(input: &str) -> IResult<&str, AST> {
     map_res(
-        delimited(char('('), tuple((char('λ'), variable, char('.'), ast)), char(')')),
+        delimited(char('('), tuple((char('λ'), alpha1, char('.'), ast)), char(')')),
         from_abstraction
     )(input)
 }
@@ -85,9 +85,8 @@ mod tests {
     fn it_parses_abstraction() {
         let (input, result) = parse("(λx.x)").unwrap();
         assert_eq!(input, "");
-        let var_x1 = Box::new(AST::Var("x"));
-        let var_x2 = Box::new(AST::Var("x"));
-        assert_eq!(result, AST::Abs(var_x1, var_x2));
+        let var_x = Box::new(AST::Var("x"));
+        assert_eq!(result, AST::Abs("x", var_x));
     }
 
     #[test]
@@ -110,10 +109,9 @@ mod tests {
     fn it_parses_variables_abstraction_application() {
         let (input, result) = parse("((λx.x) y)").unwrap();
         assert_eq!(input, "");
-        let var_x1 = Box::new(AST::Var("x"));
-        let var_x2 = Box::new(AST::Var("x"));
+        let var_x = Box::new(AST::Var("x"));
         let var_y = Box::new(AST::Var("y"));
-        assert_eq!(result, AST::App(Box::new(AST::Abs(var_x1, var_x2)), var_y));
+        assert_eq!(result, AST::App(Box::new(AST::Abs("x", var_x)), var_y));
     }
 
     #[test]
@@ -140,10 +138,9 @@ mod tests {
     fn it_parses_let() {
         let (input, result) = parse("let I = (λx.x) in (I a)").unwrap();
         assert_eq!(input, "");
-        let var_x1 = Box::new(AST::Var("x"));
-        let var_x2 = Box::new(AST::Var("x"));
+        let var_x = Box::new(AST::Var("x"));
         let var_i = Box::new(AST::Var("I"));
         let var_a= Box::new(AST::Var("a"));
-        assert_eq!(result, AST::Let("I", Box::new(AST::Abs(var_x1, var_x2)), Box::new(AST::App(var_i, var_a))));
+        assert_eq!(result, AST::Let("I", Box::new(AST::Abs("x", var_x)), Box::new(AST::App(var_i, var_a))));
     }
 }
