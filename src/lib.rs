@@ -44,6 +44,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn it_handles_variables() {
+        let output = eval(String::from("x"));
+        assert_eq!(output, String::from("x(unbound)"));
+    }
+
+    #[test]
+    fn it_handles_abstraction() {
+        let output = eval(String::from("(λx.x)"));
+        assert_eq!(output, String::from("(λ.x(0))"));
+    }
+
+    #[test]
+    fn it_handles_application() {
+        let output = eval(String::from("(x y)"));
+        assert_eq!(output, String::from("(x(unbound) y(unbound))"));
+    }
+
+    #[test]
     fn it_evaluates_the_identity_combinator() {
         let output = eval(String::from("((λx.x) y)"));
         assert_eq!(output, String::from("y(unbound)"));
