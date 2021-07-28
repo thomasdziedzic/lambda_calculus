@@ -156,4 +156,38 @@ mod tests {
             "));
         assert_eq!(output, String::from("(λ.((f(0) (λ.(λ.(f(1) x(0))))) (λ.(λ.x(0)))))"));
     }
+
+    #[test]
+    fn it_can_encode_strings() {
+        let output = eval(String::from("
+            let A = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.a) in
+            let B = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.b) in
+            let C = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.c) in
+            let D = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.d) in
+            let E = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.e) in
+            let F = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.f) in
+            let G = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.g) in
+            let H = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.h) in
+            let I = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.i) in
+            let J = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.j) in
+            let K = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.k) in
+            let L = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.l) in
+            let M = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.m) in
+            let N = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.n) in
+            let O = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.o) in
+            let P = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.p) in
+            let Q = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.q) in
+            let R = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.r) in
+            let S = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.s) in
+            let T = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.t) in
+            let U = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.u) in
+            let V = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.v) in
+            let W = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.w) in
+            let X = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.x) in
+            let Y = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.y) in
+            let Z = (λa b c d e f g h i j k l m n o p q r s t u v w x y z.z) in
+            A
+        "));
+        assert_eq!(output, String::from("(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.(λ.a(25)))))))))))))))))))))))))))"));
+    }
 }
