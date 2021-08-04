@@ -6,9 +6,9 @@ Next Steps:
   - [x] when parsing abstractions, store the bound variable as a string rather than a Var term
         in preparation for parsing multiple variable bindings in a single lambda abstraction.
   - [x] multiple variables binding in one λ abstraction
-  - [ ] investigate parsing algorithms and choose one that supports left recursion
-  - [ ] make abstraction right associative so that we don't need parens around abstractions
-  - [ ] make application left associative so that we don't need parens around applications
+  - [x] investigate parsing algorithms and choose one that supports left recursion
+  - [x] make abstraction right associative so that we don't need parens around abstractions
+  - [x] make application left associative so that we don't need parens around applications
 [ ] lambda cube
   - [ ] λ→
   - [ ] λ2
