@@ -1,3 +1,5 @@
+#![feature(try_blocks)]
+
 use std::io;
 use std::rc::Rc;
 
@@ -11,6 +13,9 @@ pub mod desugar;
 pub mod de_bruijn;
 pub mod reducer;
 
+pub use grammar::*;
+pub mod grammar;
+
 fn read() -> String {
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("error: unable to read user input");
@@ -18,7 +23,7 @@ fn read() -> String {
 }
 
 fn eval(input: String) -> String {
-    let (_input, term) = parse(&input[..]).unwrap();
+    let term = parse(&input[..]).unwrap();
     let term = desugar(term);
 
     let mut previous = Rc::new(de_bruijn_index(term));

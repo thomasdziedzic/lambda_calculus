@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn it_handles_unbound_variables() {
-        let (_input, term) = parse("x").unwrap();
+        let term = parse("x").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DUVar("x");
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn it_handles_abstraction_with_bound_variable() {
-        let (_input, term) = parse("(λx.x)").unwrap();
+        let term = parse("(λx.x)").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn it_handles_application() {
-        let (_input, term) = parse("(x y)").unwrap();
+        let term = parse("(x y)").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let unbound_x = DTerm::DUVar("x");
@@ -112,7 +112,7 @@ mod tests {
 
     #[test]
     fn it_handles_all_forms_at_once() {
-        let (_input, term) = parse("((λx.x) y)").unwrap();
+        let term = parse("((λx.x) y)").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected_abs = DTerm::DAbs(Rc::new(DTerm::DBVar("x", 0)));
@@ -123,7 +123,7 @@ mod tests {
 
     #[test]
     fn it_handles_multiple_bound_variables() {
-        let (_input, term) = parse("(λx.(λy.x))").unwrap();
+        let term = parse("(λx.(λy.x))").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let expected = DTerm::DAbs(Rc::new(DTerm::DAbs(Rc::new(DTerm::DBVar("x", 1)))));

@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn it_beta_reduces() {
-        let (_input, term) = parse("((λx.x) (y z))").unwrap();
+        let term = parse("((λx.x) (y z))").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let reduced = beta_reduction(Rc::new(dterm));
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn it_eta_reduces() {
-        let (_input, term) = parse("(λx.(f x))").unwrap();
+        let term = parse("(λx.(f x))").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let reduced = eta_reduction(Rc::new(dterm));
@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn it_does_not_eta_reduce_identity() {
-        let (_input, term) = parse("(λx.x)").unwrap();
+        let term = parse("(λx.x)").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let reduced = eta_reduction(Rc::new(dterm));
@@ -98,7 +98,7 @@ mod tests {
 
     #[test]
     fn it_beta_reduces_in_nested_abstractions() {
-        let (_input, term) = parse("(((λx.(λy.x)) (λx.x)) z)").unwrap();
+        let term = parse("(((λx.(λy.x)) (λx.x)) z)").unwrap();
         let term = desugar(term);
         let dterm = de_bruijn_index(term);
         let reduced = beta_reduction(beta_reduction(Rc::new(dterm)));

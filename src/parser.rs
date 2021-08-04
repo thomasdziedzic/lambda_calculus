@@ -1,14 +1,9 @@
-extern crate nom;
-use nom::{
-    IResult,
-    branch::alt,
-    bytes::complete::tag,
-    character::complete::{alpha1, char, multispace0},
-    combinator::map_res,
-    error::ParseError,
-    sequence::{delimited, tuple},
-    multi::separated_list1
-};
+use antlr_rust::rule_context::CustomRuleContext;
+use antlr_rust::{InputStream, common_token_stream::CommonTokenStream, tree::ParseTreeVisitor};
+use antlr_rust::tree::Visitable;
+use crate::{LambdaCalculusLexer, LambdaCalculusParser, LambdaCalculusParserContextType, LambdaCalculusVisitor};
+
+use crate::lambdacalculusparser::*;
 
 #[derive(Debug,PartialEq)]
 pub enum AST<'a> {
@@ -18,66 +13,59 @@ pub enum AST<'a> {
     Let(&'a str, Box<AST<'a>>, Box<AST<'a>>),
 }
 
-fn from_variable(input: &str) -> Result<AST, &str> {
-    Ok(AST::Var(input))
+pub struct MyLambdaCalculusParser<'i> {
+    #[allow(dead_code)]
+    _inputs: Vec<&'i str>,
+    pub(crate) ast: Option<AST<'i>>
 }
 
-fn variable(input: &str) -> IResult<&str, AST> {
-    map_res(alpha1, from_variable)(input)
+fn str_to_ast<'input>(input: &str) -> Option<AST> {
+    let lexer = LambdaCalculusLexer::new(InputStream::new(input.into()));
+    let token_source = CommonTokenStream::new(lexer);
+    let mut parser = LambdaCalculusParser::new(token_source);
+    let result = parser.term().expect("failed to parse");
+
+    let mut terms = MyLambdaCalculusParser {
+        _inputs: vec![],
+        ast: None
+    };
+
+    result.accept(&mut terms);
+
+    terms.ast
 }
 
-fn from_abstraction<'a>(input: (char, Vec<&'a str>, char, AST<'a>)) -> Result<AST<'a>, &'a str> {
-    let (_, v, _, t) = input;
-    Ok(AST::Abs(v, Box::new(t)))
+impl<'i> ParseTreeVisitor<'i, LambdaCalculusParserContextType> for MyLambdaCalculusParser<'i> {}
+
+impl<'i> LambdaCalculusVisitor<'i> for MyLambdaCalculusParser<'i> {
+    /*
+    fn visit_term(&mut self, ctx: &crate::TermContext<'i>) {
+        let left = ctx.
+        println!("{}", ctx.get_rule_index());
+    }
+    */
+    /*
+    fn visit_parens(&mut self, ctx: &crate::ParensContext<'i>) {
+        let m_term = ctx.term();
+        match m_term {
+            None => None,
+            Some(term) => term.
+        }
+    }
+    */
 }
 
-fn abstraction(input: &str) -> IResult<&str, AST> {
-    map_res(
-        delimited(char('('), tuple((char('λ'), separated_list1(tag(" "), alpha1), char('.'), ast)), char(')')),
-        from_abstraction
-    )(input)
-}
-
-fn from_application<'a>(input: (AST<'a>, char, AST<'a>)) -> Result<AST<'a>, &'a str> {
-    let (l, _, r) = input;
-    Ok(AST::App(Box::new(l), Box::new(r)))
-}
-
-fn application(input: &str) -> IResult<&str, AST> {
-    map_res(
-        delimited(char('('), tuple((ast, char(' '), ast)), char(')')),
-        from_application
-    )(input)
-}
-
-fn from_let<'a>(input: (&'a str, &'a str, char, AST<'a>, &'a str, AST<'a>)) -> Result<AST<'a>, &'a str> {
-    let (_, var, _, val, _, body) = input;
-    Ok(AST::Let(var, Box::new(val), Box::new(body)))
-}
-
-fn ws<'a, F: 'a, O, E: ParseError<&'a str>>(inner: F) -> impl FnMut(&'a str) -> IResult<&'a str, O, E>
-  where
-  F: Fn(&'a str) -> IResult<&'a str, O, E>,
-{
-  delimited(
-    multispace0,
-    inner,
-    multispace0
-  )
-}
-
-fn let_term(input: &str) -> IResult<&str, AST> {
-    map_res(tuple((ws(tag("let")), ws(alpha1), ws(char('=')), ws(ast), ws(tag("in")), ws(ast))), from_let)(input)
-}
-
-fn ast(input: &str) -> IResult<&str, AST> {
-    alt((let_term, application, abstraction, variable))(input)
-}
-
+/*
 pub fn parse(input: &str) -> IResult<&str, AST> {
   ast(input)
 }
+*/
 
+pub fn parse(input: &str) -> Result<AST, &str> {
+    Ok(AST::Var("x"))
+}
+
+/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -162,3 +150,4 @@ mod tests {
         assert_eq!(result, AST::App(Box::new(AST::App(a, b)), c));
     }
 }
+*/
