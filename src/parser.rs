@@ -1,4 +1,7 @@
+use std::borrow::{Borrow, Cow};
+
 use antlr_rust::rule_context::CustomRuleContext;
+use antlr_rust::token::Token;
 use antlr_rust::{InputStream, common_token_stream::CommonTokenStream, tree::ParseTreeVisitor};
 use antlr_rust::tree::Visitable;
 use nom::bitvec::view::AsBits;
@@ -57,9 +60,15 @@ impl<'i> LambdaCalculusVisitor<'i> for MyLambdaCalculusParser<'i> {
     fn visit_abstraction(&mut self, ctx: &AbstractionContext<'i>) {
         ctx.abs_body.as_ref().unwrap().accept(self);
 
-        let vars = vec![];
-        for variable in ctx.variables {
-            vars.push(variable.text.as_ref());
+        let mut vars = vec![];
+
+        // while implementing this for loop, discovered a bug in the nightly rust compiler:
+        // https://github.com/rust-lang/rust/issues/87657
+        // workaround is to currently use nightly-2021-07-20 which doesn't have this bug
+        for variable in &ctx.variables {
+            if let Cow::Borrowed(var_str) = variable.text {
+                vars.push(var_str);
+            }
         }
 
         let body = self._inputs.pop().unwrap();
@@ -68,9 +77,10 @@ impl<'i> LambdaCalculusVisitor<'i> for MyLambdaCalculusParser<'i> {
     }
 
     fn visit_variable(&mut self, ctx: &VariableContext<'i>) {
-        let var_str = ctx.variable.unwrap().text.as_ref();
-        let var = AST::Var(var_str);
-        self._inputs.push(var);
+        if let Cow::Borrowed(var_str) = ctx.variable.as_ref().unwrap().text {
+            let var = AST::Var(var_str);
+            self._inputs.push(var);
+        }
     }
 
     fn visit_let(&mut self, ctx: &LetContext<'i>) {
@@ -79,9 +89,11 @@ impl<'i> LambdaCalculusVisitor<'i> for MyLambdaCalculusParser<'i> {
 
         let body = self._inputs.pop().unwrap();
         let assignment = self._inputs.pop().unwrap();
-        let var_str = ctx.variable.unwrap().text.as_ref();
-        let let_statement = AST::Let(var_str, Box::new(body), Box::new(assignment));
-        self._inputs.push(let_statement);
+
+        if let Cow::Borrowed(var_str) = ctx.variable.as_ref().unwrap().text {
+            let let_statement = AST::Let(var_str, Box::new(assignment), Box::new(body));
+            self._inputs.push(let_statement);
+        }
     }
 }
 

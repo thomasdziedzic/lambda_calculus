@@ -38,14 +38,14 @@ use std::ops::{DerefMut, Deref};
 use std::borrow::{Borrow,BorrowMut};
 use std::any::{Any,TypeId};
 
-		pub const T__0:isize=1;
-		pub const T__1:isize=2;
-		pub const T__2:isize=3;
-		pub const T__3:isize=4;
-		pub const T__4:isize=5;
-		pub const T__5:isize=6;
-		pub const T__6:isize=7;
-		pub const VARIABLE:isize=8;
+		pub const T__0:isize=1; 
+		pub const T__1:isize=2; 
+		pub const T__2:isize=3; 
+		pub const T__3:isize=4; 
+		pub const T__4:isize=5; 
+		pub const T__5:isize=6; 
+		pub const T__6:isize=7; 
+		pub const VARIABLE:isize=8; 
 		pub const WS:isize=9;
 	pub const RULE_term:usize = 0;
 	pub const ruleNames: [&'static str; 1] =  [
@@ -54,7 +54,7 @@ use std::any::{Any,TypeId};
 
 
 	pub const _LITERAL_NAMES: [Option<&'static str>;8] = [
-		None, Some("'\u{03BB}'"), Some("'.'"), Some("'let'"), Some("'='"), Some("'in'"),
+		None, Some("'\u{03BB}'"), Some("'.'"), Some("'let'"), Some("'='"), Some("'in'"), 
 		Some("'('"), Some("')'")
 	];
 	pub const _SYMBOLIC_NAMES: [Option<&'static str>;10]  = [
@@ -142,8 +142,8 @@ where
 
 /// Trait for monomorphized trait object that corresponds to the nodes of parse tree generated for LambdaCalculusParser
 pub trait LambdaCalculusParserContext<'input>:
-	for<'x> Listenable<dyn LambdaCalculusListener<'input> + 'x > +
-	for<'x> Visitable<dyn LambdaCalculusVisitor<'input> + 'x > +
+	for<'x> Listenable<dyn LambdaCalculusListener<'input> + 'x > + 
+	for<'x> Visitable<dyn LambdaCalculusVisitor<'input> + 'x > + 
 	ParserRuleContext<'input, TF=LocalTokenFactory<'input>, Ctx=LambdaCalculusParserContextType>
 {}
 
@@ -379,7 +379,7 @@ impl<'input> ParensContextExt<'input>{
 		Rc::new(
 			TermContextAll::ParensContext(
 				BaseParserRuleContext::copy_from(ctx,ParensContextExt{
-        			inner:None,
+        			inner:None, 
         			base: ctx.borrow().clone(),
         			ph:PhantomData
 				})
@@ -450,7 +450,7 @@ impl<'input> ApplicationContextExt<'input>{
 		Rc::new(
 			TermContextAll::ApplicationContext(
 				BaseParserRuleContext::copy_from(ctx,ApplicationContextExt{
-        			left:None, right:None,
+        			left:None, right:None, 
         			base: ctx.borrow().clone(),
         			ph:PhantomData
 				})
@@ -462,13 +462,17 @@ impl<'input> ApplicationContextExt<'input>{
 pub type AbstractionContext<'input> = BaseParserRuleContext<'input,AbstractionContextExt<'input>>;
 
 pub trait AbstractionContextAttrs<'input>: LambdaCalculusParserContext<'input>{
-	/// Retrieves first TerminalNode corresponding to token VARIABLE
-	/// Returns `None` if there is no child corresponding to token VARIABLE
-	fn VARIABLE(&self) -> Option<Rc<TerminalNode<'input,LambdaCalculusParserContextType>>> where Self:Sized{
-		self.get_token(VARIABLE, 0)
-	}
 	fn term(&self) -> Option<Rc<TermContextAll<'input>>> where Self:Sized{
 		self.child_of_type(0)
+	}
+	/// Retrieves all `TerminalNode`s corresponding to token VARIABLE in current rule
+	fn VARIABLE_all(&self) -> Vec<Rc<TerminalNode<'input,LambdaCalculusParserContextType>>>  where Self:Sized{
+		self.children_of_type()
+	}
+	/// Retrieves 'i's TerminalNode corresponding to token VARIABLE, starting from 0.
+	/// Returns `None` if number of children corresponding to token VARIABLE is less or equal than `i`.
+	fn VARIABLE(&self, i: usize) -> Option<Rc<TerminalNode<'input,LambdaCalculusParserContextType>>> where Self:Sized{
+		self.get_token(VARIABLE, i)
 	}
 }
 
@@ -524,9 +528,9 @@ impl<'input> AbstractionContextExt<'input>{
 		Rc::new(
 			TermContextAll::AbstractionContext(
 				BaseParserRuleContext::copy_from(ctx,AbstractionContextExt{
-					VARIABLE:None,
-        			variables:Vec::new(),
-        			abs_body:None,
+					VARIABLE:None, 
+        			variables:Vec::new(), 
+        			abs_body:None, 
         			base: ctx.borrow().clone(),
         			ph:PhantomData
 				})
@@ -595,7 +599,7 @@ impl<'input> VariableContextExt<'input>{
 		Rc::new(
 			TermContextAll::VariableContext(
 				BaseParserRuleContext::copy_from(ctx,VariableContextExt{
-					variable:None,
+					variable:None, 
         			base: ctx.borrow().clone(),
         			ph:PhantomData
 				})
@@ -672,8 +676,8 @@ impl<'input> LetContextExt<'input>{
 		Rc::new(
 			TermContextAll::LetContext(
 				BaseParserRuleContext::copy_from(ctx,LetContextExt{
-					variable:None,
-        			assignment:None, body:None,
+					variable:None, 
+        			assignment:None, body:None, 
         			base: ctx.borrow().clone(),
         			ph:PhantomData
 				})
@@ -702,15 +706,16 @@ where
 	    let mut _localctx: Rc<TermContextAll> = _localctx;
         let mut _prevctx = _localctx.clone();
 		let _startState = 0;
+		let mut _la: isize;
 		let result: Result<(), ANTLRError> = try {
 			let mut _alt: isize;
 			//recog.base.enter_outer_alt(_localctx.clone(), 1);
 			recog.base.enter_outer_alt(None, 1);
 			{
-			recog.base.set_state(19);
+			recog.base.set_state(23);
 			recog.err_handler.sync(&mut recog.base)?;
 			match recog.base.input.la(1) {
-			 VARIABLE
+			 VARIABLE 
 				=> {
 					{
 					let mut tmp = VariableContextExt::new(&**_localctx);
@@ -722,12 +727,12 @@ where
 					recog.base.set_state(3);
 					let tmp = recog.base.match_token(VARIABLE,&mut recog.err_handler)?;
 					if let TermContextAll::VariableContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.variable = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.variable = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
 					}
 				}
 
-			 T__0
+			 T__0 
 				=> {
 					{
 					let mut tmp = AbstractionContextExt::new(&**_localctx);
@@ -737,80 +742,93 @@ where
 					recog.base.set_state(4);
 					recog.base.match_token(T__0,&mut recog.err_handler)?;
 
-					recog.base.set_state(5);
-					let tmp = recog.base.match_token(VARIABLE,&mut recog.err_handler)?;
-					if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.VARIABLE = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					recog.base.set_state(6); 
+					recog.err_handler.sync(&mut recog.base)?;
+					_la = recog.base.input.la(1);
+					loop {
+						{
+						{
+						recog.base.set_state(5);
+						let tmp = recog.base.match_token(VARIABLE,&mut recog.err_handler)?;
+						if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
+						ctx.VARIABLE = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
-					let temp = if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.VARIABLE.clone().unwrap() } else {unreachable!("cant cast");} ;
-					if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.variables.push(temp); } else {unreachable!("cant cast");}
-					recog.base.set_state(6);
+						let temp = if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
+						ctx.VARIABLE.clone().unwrap() } else {unreachable!("cant cast");} ;
+						if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
+						ctx.variables.push(temp); } else {unreachable!("cant cast");}  
+						}
+						}
+						recog.base.set_state(8); 
+						recog.err_handler.sync(&mut recog.base)?;
+						_la = recog.base.input.la(1);
+						if !(_la==VARIABLE) {break}
+					}
+					recog.base.set_state(10);
 					recog.base.match_token(T__1,&mut recog.err_handler)?;
 
 					/*InvokeRule term*/
-					recog.base.set_state(7);
+					recog.base.set_state(11);
 					let tmp = recog.term_rec(4)?;
 					if let TermContextAll::AbstractionContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.abs_body = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.abs_body = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
 					}
 				}
 
-			 T__2
+			 T__2 
 				=> {
 					{
 					let mut tmp = LetContextExt::new(&**_localctx);
 					recog.ctx = Some(tmp.clone());
 					_localctx = tmp;
 					_prevctx = _localctx.clone();
-					recog.base.set_state(8);
+					recog.base.set_state(12);
 					recog.base.match_token(T__2,&mut recog.err_handler)?;
 
-					recog.base.set_state(9);
+					recog.base.set_state(13);
 					let tmp = recog.base.match_token(VARIABLE,&mut recog.err_handler)?;
 					if let TermContextAll::LetContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.variable = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.variable = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
-					recog.base.set_state(10);
+					recog.base.set_state(14);
 					recog.base.match_token(T__3,&mut recog.err_handler)?;
 
 					/*InvokeRule term*/
-					recog.base.set_state(11);
+					recog.base.set_state(15);
 					let tmp = recog.term_rec(0)?;
 					if let TermContextAll::LetContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.assignment = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.assignment = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
-					recog.base.set_state(12);
+					recog.base.set_state(16);
 					recog.base.match_token(T__4,&mut recog.err_handler)?;
 
 					/*InvokeRule term*/
-					recog.base.set_state(13);
+					recog.base.set_state(17);
 					let tmp = recog.term_rec(2)?;
 					if let TermContextAll::LetContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.body = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.body = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
 					}
 				}
 
-			 T__5
+			 T__5 
 				=> {
 					{
 					let mut tmp = ParensContextExt::new(&**_localctx);
 					recog.ctx = Some(tmp.clone());
 					_localctx = tmp;
 					_prevctx = _localctx.clone();
-					recog.base.set_state(15);
+					recog.base.set_state(19);
 					recog.base.match_token(T__5,&mut recog.err_handler)?;
 
 					/*InvokeRule term*/
-					recog.base.set_state(16);
+					recog.base.set_state(20);
 					let tmp = recog.term_rec(0)?;
 					if let TermContextAll::ParensContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.inner = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.inner = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
-					recog.base.set_state(17);
+					recog.base.set_state(21);
 					recog.base.match_token(T__6,&mut recog.err_handler)?;
 
 					}
@@ -821,9 +839,9 @@ where
 
 			let tmp = recog.input.lt(-1).cloned();
 			recog.ctx.as_ref().unwrap().set_stop(tmp);
-			recog.base.set_state(25);
+			recog.base.set_state(29);
 			recog.err_handler.sync(&mut recog.base)?;
-			_alt = recog.interpreter.adaptive_predict(1,&mut recog.base)?;
+			_alt = recog.interpreter.adaptive_predict(2,&mut recog.base)?;
 			while { _alt!=2 && _alt!=INVALID_ALT } {
 				if _alt==1 {
 					recog.trigger_exit_rule_event();
@@ -837,22 +855,22 @@ where
 					} else {unreachable!("cant cast");}
 					recog.push_new_recursion_context(tmp.clone(), _startState, RULE_term);
 					_localctx = tmp;
-					recog.base.set_state(21);
+					recog.base.set_state(25);
 					if !({recog.precpred(None, 3)}) {
 						Err(FailedPredicateError::new(&mut recog.base, Some("recog.precpred(None, 3)".to_owned()), None))?;
 					}
 					/*InvokeRule term*/
-					recog.base.set_state(22);
+					recog.base.set_state(26);
 					let tmp = recog.term_rec(4)?;
 					if let TermContextAll::ApplicationContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
-					ctx.right = Some(tmp.clone()); } else {unreachable!("cant cast");}
+					ctx.right = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
 					}
-					}
+					} 
 				}
-				recog.base.set_state(27);
+				recog.base.set_state(31);
 				recog.err_handler.sync(&mut recog.base)?;
-				_alt = recog.interpreter.adaptive_predict(1,&mut recog.base)?;
+				_alt = recog.interpreter.adaptive_predict(2,&mut recog.base)?;
 			}
 			}
 		};
@@ -891,19 +909,21 @@ lazy_static! {
 
 const _serializedATN:&'static str =
 	"\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x0b\x1f\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\
-	\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\
-	\x03\x02\x03\x02\x05\x02\x16\x0a\x02\x03\x02\x03\x02\x07\x02\x1a\x0a\x02\
-	\x0c\x02\x0e\x02\x1d\x0b\x02\x03\x02\x02\x03\x02\x03\x02\x02\x02\x02\x21\
-	\x02\x15\x03\x02\x02\x02\x04\x05\x08\x02\x01\x02\x05\x16\x07\x0a\x02\x02\
-	\x06\x07\x07\x03\x02\x02\x07\x08\x07\x0a\x02\x02\x08\x09\x07\x04\x02\x02\
-	\x09\x16\x05\x02\x02\x06\x0a\x0b\x07\x05\x02\x02\x0b\x0c\x07\x0a\x02\x02\
-	\x0c\x0d\x07\x06\x02\x02\x0d\x0e\x05\x02\x02\x02\x0e\x0f\x07\x07\x02\x02\
-	\x0f\x10\x05\x02\x02\x04\x10\x16\x03\x02\x02\x02\x11\x12\x07\x08\x02\x02\
-	\x12\x13\x05\x02\x02\x02\x13\x14\x07\x09\x02\x02\x14\x16\x03\x02\x02\x02\
-	\x15\x04\x03\x02\x02\x02\x15\x06\x03\x02\x02\x02\x15\x0a\x03\x02\x02\x02\
-	\x15\x11\x03\x02\x02\x02\x16\x1b\x03\x02\x02\x02\x17\x18\x0c\x05\x02\x02\
-	\x18\x1a\x05\x02\x02\x06\x19\x17\x03\x02\x02\x02\x1a\x1d\x03\x02\x02\x02\
-	\x1b\x19\x03\x02\x02\x02\x1b\x1c\x03\x02\x02\x02\x1c\x03\x03\x02\x02\x02\
-	\x1d\x1b\x03\x02\x02\x02\x04\x15\x1b";
+	\x0b\x23\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x06\x02\x09\x0a\
+	\x02\x0d\x02\x0e\x02\x0a\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\
+	\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\x1a\x0a\
+	\x02\x03\x02\x03\x02\x07\x02\x1e\x0a\x02\x0c\x02\x0e\x02\x21\x0b\x02\x03\
+	\x02\x02\x03\x02\x03\x02\x02\x02\x02\x26\x02\x19\x03\x02\x02\x02\x04\x05\
+	\x08\x02\x01\x02\x05\x1a\x07\x0a\x02\x02\x06\x08\x07\x03\x02\x02\x07\x09\
+	\x07\x0a\x02\x02\x08\x07\x03\x02\x02\x02\x09\x0a\x03\x02\x02\x02\x0a\x08\
+	\x03\x02\x02\x02\x0a\x0b\x03\x02\x02\x02\x0b\x0c\x03\x02\x02\x02\x0c\x0d\
+	\x07\x04\x02\x02\x0d\x1a\x05\x02\x02\x06\x0e\x0f\x07\x05\x02\x02\x0f\x10\
+	\x07\x0a\x02\x02\x10\x11\x07\x06\x02\x02\x11\x12\x05\x02\x02\x02\x12\x13\
+	\x07\x07\x02\x02\x13\x14\x05\x02\x02\x04\x14\x1a\x03\x02\x02\x02\x15\x16\
+	\x07\x08\x02\x02\x16\x17\x05\x02\x02\x02\x17\x18\x07\x09\x02\x02\x18\x1a\
+	\x03\x02\x02\x02\x19\x04\x03\x02\x02\x02\x19\x06\x03\x02\x02\x02\x19\x0e\
+	\x03\x02\x02\x02\x19\x15\x03\x02\x02\x02\x1a\x1f\x03\x02\x02\x02\x1b\x1c\
+	\x0c\x05\x02\x02\x1c\x1e\x05\x02\x02\x06\x1d\x1b\x03\x02\x02\x02\x1e\x21\
+	\x03\x02\x02\x02\x1f\x1d\x03\x02\x02\x02\x1f\x20\x03\x02\x02\x02\x20\x03\
+	\x03\x02\x02\x02\x21\x1f\x03\x02\x02\x02\x05\x0a\x19\x1f";
 
