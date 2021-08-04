@@ -164,18 +164,27 @@ mod tests {
         assert_eq!(result, AST::Let("I", Box::new(AST::Abs(vec!["x"], var_x)), Box::new(AST::App(var_i, var_a))));
     }
 
-    #[test] #[ignore]
+    #[test]
     fn it_associates_abstractions_to_the_right() {
         let result = parse("λx.λy.x").unwrap();
         assert_eq!(result, AST::Abs(vec!["x"], Box::new(AST::Abs(vec!["y"], Box::new(AST::Var("x"))))))
     }
 
-    #[test] #[ignore]
+    #[test]
     fn it_associates_applications_to_the_left() {
         let result = parse("a b c").unwrap();
         let a = Box::new(AST::Var("a"));
         let b = Box::new(AST::Var("b"));
         let c = Box::new(AST::Var("c"));
         assert_eq!(result, AST::App(Box::new(AST::App(a, b)), c));
+    }
+
+    #[test]
+    fn it_associates_multiple_applications_within_multiple_abstractions() {
+        let result = parse("λa.λb.a b").unwrap();
+        let a = Box::new(AST::Var("a"));
+        let b = Box::new(AST::Var("b"));
+        let expected = AST::Abs(vec!["a"], Box::new(AST::Abs(vec!["b"], Box::new(AST::App(a, b)))));
+        assert_eq!(result, expected);
     }
 }
