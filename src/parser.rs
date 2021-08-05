@@ -1,10 +1,7 @@
-use std::borrow::{Borrow, Cow};
+use std::borrow::{Cow};
 
-use antlr_rust::rule_context::CustomRuleContext;
-use antlr_rust::token::Token;
 use antlr_rust::{InputStream, common_token_stream::CommonTokenStream, tree::ParseTreeVisitor};
 use antlr_rust::tree::Visitable;
-use nom::bitvec::view::AsBits;
 use crate::{LambdaCalculusLexer, LambdaCalculusParser, LambdaCalculusParserContextType, LambdaCalculusVisitor};
 
 use crate::lambdacalculusparser::*;
@@ -18,9 +15,7 @@ pub enum AST<'a> {
 }
 
 pub struct MyLambdaCalculusParser<'i> {
-    #[allow(dead_code)]
-    _inputs: Vec<AST<'i>>,
-    pub(crate) ast: Option<AST<'i>>
+    _inputs: Vec<AST<'i>>
 }
 
 fn str_to_ast<'input>(input: &str) -> Option<AST> {
@@ -30,8 +25,7 @@ fn str_to_ast<'input>(input: &str) -> Option<AST> {
     let result = parser.term().expect("failed to parse");
 
     let mut terms = MyLambdaCalculusParser {
-        _inputs: vec![],
-        ast: None
+        _inputs: vec![]
     };
 
     result.accept(&mut terms);
