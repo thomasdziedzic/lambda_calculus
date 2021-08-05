@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn it_evaluates_the_identity_combinator() {
-        let output = eval(String::from("((λx.x) y)"));
+        let output = eval(String::from("(λx.x) y"));
         assert_eq!(output, String::from("y(unbound)"));
     }
 
@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn it_evaluates_the_s_combinator() {
-        let output = eval(String::from("((((λx.(λy.(λz.((x z) (y z))))) a) b) c)"));
+        let output = eval(String::from("(λx y z.(x z) (y z)) a b c"));
         assert_eq!(output, String::from("((a(unbound) c(unbound)) (b(unbound) c(unbound)))"));
     }
 
@@ -135,13 +135,13 @@ mod tests {
     #[test]
     fn it_handles_church_numerals() {
         let output = eval(String::from("
-            let zero = (λf.(λx.x)) in
-            let succ = (λn.(λf.(λx.(f ((n f) x))))) in
-            let one = (succ zero) in
-            let two = (succ one) in
-            let three = (succ two) in
-            let plus = (λm.(λn.(λf.(λx.((m f) ((n f) x)))))) in
-            ((plus two) three)
+            let zero = λf x.x in
+            let succ = λn f x.f (n f x) in
+            let one = succ zero in
+            let two = succ one in
+            let three = succ two in
+            let plus = λm n f x.(m f) (n f x) in
+            plus two three
             "));
         assert_eq!(output, String::from("(λ.(λ.(f(1) (f(1) (f(1) (f(1) (f(1) x(0))))))))"));
     }
