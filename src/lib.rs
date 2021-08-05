@@ -149,15 +149,15 @@ mod tests {
     #[test]
     fn it_handles_pairs() {
         let output = eval(String::from("
-            let pair = (λx.(λy.(λf.((f x) y)))) in
-            let first = (λp.(p (λx.(λy.x)))) in
-            let second = (λp.(p (λx.(λy.y)))) in
-            let zero = (λf.(λx.x)) in
-            let succ = (λn.(λf.(λx.(f ((n f) x))))) in
-            let one = (succ zero) in
-            let nums = ((pair zero) one) in
-            let flip = (λp.((pair (second p)) (first p))) in
-            (flip nums)
+            let pair = λx y f.f x y in
+            let first = λp.p (λx y.x) in
+            let second = λp.p (λx y.y) in
+            let zero = λf x.x in
+            let succ = λn f x.f (n f x) in
+            let one = succ zero in
+            let nums = pair zero one in
+            let flip = λp.pair (second p) (first p) in
+            flip nums
             "));
         assert_eq!(output, String::from("(λ.((f(0) (λ.(λ.(f(1) x(0))))) (λ.(λ.x(0)))))"));
     }
