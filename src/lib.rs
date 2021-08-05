@@ -124,10 +124,10 @@ mod tests {
     #[test]
     fn it_handles_booleans() {
         let output = eval(String::from("
-            let TRUE = (λx.(λy.x)) in
-            let FALSE = (λx.(λy.y)) in
-            let AND = (λp.(λq.((p q) p))) in
-            ((AND TRUE) FALSE)
+            let TRUE = λx y.x in
+            let FALSE = λx y.y in
+            let AND = λp q.p q p in
+            AND TRUE FALSE
             "));
         assert_eq!(output, String::from("(λ.(λ.y(0)))"));
     }
