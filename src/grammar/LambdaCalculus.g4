@@ -11,3 +11,7 @@ term
 VARIABLE : [a-zA-Z0-9_]+;
 
 WS : [ \r\n]+ -> skip;
+
+SINGLE_LINE_COMMENT: '#' .*? ('\n'|'\r'|EOF) -> skip;
+
+MULTI_LINE_COMMENT: '(*' .*? '*)' -> skip;

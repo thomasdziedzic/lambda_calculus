@@ -181,4 +181,35 @@ mod tests {
         let expected = AST::Abs(vec!["a"], Box::new(AST::Abs(vec!["b"], Box::new(AST::App(a, b)))));
         assert_eq!(result, expected);
     }
+
+    #[test]
+    fn it_ignores_comments() {
+        let result = parse("
+        (*
+            multi
+            line
+            comment
+        *)
+        # single line comment
+        x # comment goes after term
+        # another single line comment
+        (*
+            another
+            multi
+            line
+            comment
+        *)
+        ").unwrap();
+        assert_eq!(result, AST::Var("x"));
+    }
+
+    #[test]
+    fn it_ignores_single_line_comments() {
+        let result = parse("
+        # single line comment
+        x
+        # another single line comment
+        ").unwrap();
+        assert_eq!(result, AST::Var("x"));
+    }
 }

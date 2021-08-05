@@ -46,7 +46,9 @@ use std::any::{Any,TypeId};
 		pub const T__5:isize=6; 
 		pub const T__6:isize=7; 
 		pub const VARIABLE:isize=8; 
-		pub const WS:isize=9;
+		pub const WS:isize=9; 
+		pub const SINGLE_LINE_COMMENT:isize=10; 
+		pub const MULTI_LINE_COMMENT:isize=11;
 	pub const RULE_term:usize = 0;
 	pub const ruleNames: [&'static str; 1] =  [
 		"term"
@@ -57,8 +59,9 @@ use std::any::{Any,TypeId};
 		None, Some("'\u{03BB}'"), Some("'.'"), Some("'let'"), Some("'='"), Some("'in'"), 
 		Some("'('"), Some("')'")
 	];
-	pub const _SYMBOLIC_NAMES: [Option<&'static str>;10]  = [
-		None, None, None, None, None, None, None, None, Some("VARIABLE"), Some("WS")
+	pub const _SYMBOLIC_NAMES: [Option<&'static str>;12]  = [
+		None, None, None, None, None, None, None, None, Some("VARIABLE"), Some("WS"), 
+		Some("SINGLE_LINE_COMMENT"), Some("MULTI_LINE_COMMENT")
 	];
 	lazy_static!{
 	    static ref _shared_context_cache: Arc<PredictionContextCache> = Arc::new(PredictionContextCache::new());
@@ -911,7 +914,7 @@ lazy_static! {
 
 const _serializedATN:&'static str =
 	"\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x0b\x23\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x06\x02\x09\x0a\
+	\x0d\x23\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x06\x02\x09\x0a\
 	\x02\x0d\x02\x0e\x02\x0a\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\
 	\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\x1a\x0a\
 	\x02\x03\x02\x03\x02\x07\x02\x1e\x0a\x02\x0c\x02\x0e\x02\x21\x0b\x02\x03\
