@@ -1,0 +1,64 @@
+(* booleans *)
+
+let TRUE = λx y.x in
+let FALSE = λx y.y in
+let AND = λp q.p q p in
+
+(* standard combinators *)
+
+let i_comb = λx.x in
+let k_comb = λx y.x in
+let s_comb = λx y z.(x z) (y z) in
+let y_comb = λg.((λx.(g (x x))) (λx.(g (x x)))) in
+
+(* church numerals *)
+
+let zero = λf x.x in
+let succ = λn f x.f (n f x) in
+let one = succ zero in
+let two = succ one in
+let three = succ two in
+let plus = λm n f x.(m f) (n f x) in
+
+(* pairs *)
+
+let pair = λx y f.f x y in
+let first = λp.p (λx y.x) in
+let second = λp.p (λx y.y) in
+let zero = λf x.x in
+let succ = λn f x.f (n f x) in
+let one = succ zero in
+let nums = pair zero one in
+let flip = λp.pair (second p) (first p) in
+
+(* strings *)
+
+let A = λa b c d e f g h i j k l m n o p q r s t u v w x y z.a in
+let B = λa b c d e f g h i j k l m n o p q r s t u v w x y z.b in
+let C = λa b c d e f g h i j k l m n o p q r s t u v w x y z.c in
+let D = λa b c d e f g h i j k l m n o p q r s t u v w x y z.d in
+let E = λa b c d e f g h i j k l m n o p q r s t u v w x y z.e in
+let F = λa b c d e f g h i j k l m n o p q r s t u v w x y z.f in
+let G = λa b c d e f g h i j k l m n o p q r s t u v w x y z.g in
+let H = λa b c d e f g h i j k l m n o p q r s t u v w x y z.h in
+let I = λa b c d e f g h i j k l m n o p q r s t u v w x y z.i in
+let J = λa b c d e f g h i j k l m n o p q r s t u v w x y z.j in
+let K = λa b c d e f g h i j k l m n o p q r s t u v w x y z.k in
+let L = λa b c d e f g h i j k l m n o p q r s t u v w x y z.l in
+let M = λa b c d e f g h i j k l m n o p q r s t u v w x y z.m in
+let N = λa b c d e f g h i j k l m n o p q r s t u v w x y z.n in
+let O = λa b c d e f g h i j k l m n o p q r s t u v w x y z.o in
+let P = λa b c d e f g h i j k l m n o p q r s t u v w x y z.p in
+let Q = λa b c d e f g h i j k l m n o p q r s t u v w x y z.q in
+let R = λa b c d e f g h i j k l m n o p q r s t u v w x y z.r in
+let S = λa b c d e f g h i j k l m n o p q r s t u v w x y z.s in
+let T = λa b c d e f g h i j k l m n o p q r s t u v w x y z.t in
+let U = λa b c d e f g h i j k l m n o p q r s t u v w x y z.u in
+let V = λa b c d e f g h i j k l m n o p q r s t u v w x y z.v in
+let W = λa b c d e f g h i j k l m n o p q r s t u v w x y z.w in
+let X = λa b c d e f g h i j k l m n o p q r s t u v w x y z.x in
+let Y = λa b c d e f g h i j k l m n o p q r s t u v w x y z.y in
+let Z = λa b c d e f g h i j k l m n o p q r s t u v w x y z.z in
+let CONCAT = λa b c d e f g h i j k l m n o p q r s t u v w x y z char1 char2 glue.glue (char1 a b c d e f g h i j k l m n o p q r s t u v w x y z) (char2 a b c d e f g h i j k l m n o p q r s t u v w x y z) in
+
+AND TRUE TRUE
