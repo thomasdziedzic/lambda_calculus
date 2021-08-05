@@ -43,5 +43,12 @@ pub trait LambdaCalculusVisitor<'input>: ParseTreeVisitor<'input,LambdaCalculusP
 	 */
 	fn visit_let(&mut self, ctx: &LetContext<'input>) { self.visit_children(ctx) }
 
+	/**
+	 * Visit a parse tree produced by the {@code eof}
+	 * labeled alternative in {@link LambdaCalculusParser#term}.
+	 * @param ctx the parse tree
+	 */
+	fn visit_eof(&mut self, ctx: &EofContext<'input>) { self.visit_children(ctx) }
+
 
 }

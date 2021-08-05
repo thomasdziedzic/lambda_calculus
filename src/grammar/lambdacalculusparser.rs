@@ -236,7 +236,7 @@ where
 		) -> bool {
 		match pred_index {
 				0=>{
-					recog.precpred(None, 3)
+					recog.precpred(None, 4)
 				}
 			_ => true
 		}
@@ -250,6 +250,7 @@ pub enum TermContextAll<'input>{
 	AbstractionContext(AbstractionContext<'input>),
 	VariableContext(VariableContext<'input>),
 	LetContext(LetContext<'input>),
+	EofContext(EofContext<'input>),
 Error(TermContext<'input>)
 }
 antlr_rust::type_id!{TermContextAll<'a>}
@@ -268,6 +269,7 @@ impl<'input> Deref for TermContextAll<'input>{
 			AbstractionContext(inner) => inner,
 			VariableContext(inner) => inner,
 			LetContext(inner) => inner,
+			EofContext(inner) => inner,
 Error(inner) => inner
 		}
 	}
@@ -689,6 +691,73 @@ impl<'input> LetContextExt<'input>{
 	}
 }
 
+pub type EofContext<'input> = BaseParserRuleContext<'input,EofContextExt<'input>>;
+
+pub trait EofContextAttrs<'input>: LambdaCalculusParserContext<'input>{
+	/// Retrieves first TerminalNode corresponding to token EOF
+	/// Returns `None` if there is no child corresponding to token EOF
+	fn EOF(&self) -> Option<Rc<TerminalNode<'input,LambdaCalculusParserContextType>>> where Self:Sized{
+		self.get_token(EOF, 0)
+	}
+}
+
+impl<'input> EofContextAttrs<'input> for EofContext<'input>{}
+
+pub struct EofContextExt<'input>{
+	base:TermContextExt<'input>,
+	ph:PhantomData<&'input str>
+}
+
+antlr_rust::type_id!{EofContextExt<'a>}
+
+impl<'input> LambdaCalculusParserContext<'input> for EofContext<'input>{}
+
+impl<'input,'a> Listenable<dyn LambdaCalculusListener<'input> + 'a> for EofContext<'input>{
+	fn enter(&self,listener: &mut (dyn LambdaCalculusListener<'input> + 'a)) {
+		listener.enter_every_rule(self);
+		listener.enter_eof(self);
+	}
+	fn exit(&self,listener: &mut (dyn LambdaCalculusListener<'input> + 'a)) {
+		listener.exit_eof(self);
+		listener.exit_every_rule(self);
+	}
+}
+
+impl<'input,'a> Visitable<dyn LambdaCalculusVisitor<'input> + 'a> for EofContext<'input>{
+	fn accept(&self,visitor: &mut (dyn LambdaCalculusVisitor<'input> + 'a)) {
+		visitor.visit_eof(self);
+	}
+}
+
+impl<'input> CustomRuleContext<'input> for EofContextExt<'input>{
+	type TF = LocalTokenFactory<'input>;
+	type Ctx = LambdaCalculusParserContextType;
+	fn get_rule_index(&self) -> usize { RULE_term }
+	//fn type_rule_index() -> usize where Self: Sized { RULE_term }
+}
+
+impl<'input> Borrow<TermContextExt<'input>> for EofContext<'input>{
+	fn borrow(&self) -> &TermContextExt<'input> { &self.base }
+}
+impl<'input> BorrowMut<TermContextExt<'input>> for EofContext<'input>{
+	fn borrow_mut(&mut self) -> &mut TermContextExt<'input> { &mut self.base }
+}
+
+impl<'input> TermContextAttrs<'input> for EofContext<'input> {}
+
+impl<'input> EofContextExt<'input>{
+	fn new(ctx: &dyn TermContextAttrs<'input>) -> Rc<TermContextAll<'input>>  {
+		Rc::new(
+			TermContextAll::EofContext(
+				BaseParserRuleContext::copy_from(ctx,EofContextExt{
+        			base: ctx.borrow().clone(),
+        			ph:PhantomData
+				})
+			)
+		)
+	}
+}
+
 impl<'input, I, H> LambdaCalculusParser<'input, I, H>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
@@ -715,7 +784,7 @@ where
 			//recog.base.enter_outer_alt(_localctx.clone(), 1);
 			recog.base.enter_outer_alt(None, 1);
 			{
-			recog.base.set_state(23);
+			recog.base.set_state(24);
 			recog.err_handler.sync(&mut recog.base)?;
 			match recog.base.input.la(1) {
 			 VARIABLE 
@@ -810,7 +879,7 @@ where
 
 					/*InvokeRule term*/
 					recog.base.set_state(17);
-					let tmp = recog.term_rec(2)?;
+					let tmp = recog.term_rec(3)?;
 					if let TermContextAll::LetContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
 					ctx.body = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
@@ -839,12 +908,25 @@ where
 					}
 				}
 
+			 EOF 
+				=> {
+					{
+					let mut tmp = EofContextExt::new(&**_localctx);
+					recog.ctx = Some(tmp.clone());
+					_localctx = tmp;
+					_prevctx = _localctx.clone();
+					recog.base.set_state(23);
+					recog.base.match_token(EOF,&mut recog.err_handler)?;
+
+					}
+				}
+
 				_ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?
 			}
 
 			let tmp = recog.input.lt(-1).cloned();
 			recog.ctx.as_ref().unwrap().set_stop(tmp);
-			recog.base.set_state(29);
+			recog.base.set_state(30);
 			recog.err_handler.sync(&mut recog.base)?;
 			_alt = recog.interpreter.adaptive_predict(2,&mut recog.base)?;
 			while { _alt!=2 && _alt!=INVALID_ALT } {
@@ -860,20 +942,20 @@ where
 					} else {unreachable!("cant cast");}
 					recog.push_new_recursion_context(tmp.clone(), _startState, RULE_term);
 					_localctx = tmp;
-					recog.base.set_state(25);
-					if !({recog.precpred(None, 3)}) {
-						Err(FailedPredicateError::new(&mut recog.base, Some("recog.precpred(None, 3)".to_owned()), None))?;
+					recog.base.set_state(26);
+					if !({recog.precpred(None, 4)}) {
+						Err(FailedPredicateError::new(&mut recog.base, Some("recog.precpred(None, 4)".to_owned()), None))?;
 					}
 					/*InvokeRule term*/
-					recog.base.set_state(26);
-					let tmp = recog.term_rec(4)?;
+					recog.base.set_state(27);
+					let tmp = recog.term_rec(5)?;
 					if let TermContextAll::ApplicationContext(ctx) = cast_mut::<_,TermContextAll >(&mut _localctx){
 					ctx.right = Some(tmp.clone()); } else {unreachable!("cant cast");}  
 
 					}
 					} 
 				}
-				recog.base.set_state(31);
+				recog.base.set_state(32);
 				recog.err_handler.sync(&mut recog.base)?;
 				_alt = recog.interpreter.adaptive_predict(2,&mut recog.base)?;
 			}
@@ -914,21 +996,22 @@ lazy_static! {
 
 const _serializedATN:&'static str =
 	"\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x0d\x23\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x06\x02\x09\x0a\
+	\x0d\x24\x04\x02\x09\x02\x03\x02\x03\x02\x03\x02\x03\x02\x06\x02\x09\x0a\
 	\x02\x0d\x02\x0e\x02\x0a\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\
-	\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\x1a\x0a\
-	\x02\x03\x02\x03\x02\x07\x02\x1e\x0a\x02\x0c\x02\x0e\x02\x21\x0b\x02\x03\
-	\x02\x02\x03\x02\x03\x02\x02\x02\x02\x26\x02\x19\x03\x02\x02\x02\x04\x05\
-	\x08\x02\x01\x02\x05\x1a\x07\x0a\x02\x02\x06\x08\x07\x03\x02\x02\x07\x09\
-	\x07\x0a\x02\x02\x08\x07\x03\x02\x02\x02\x09\x0a\x03\x02\x02\x02\x0a\x08\
-	\x03\x02\x02\x02\x0a\x0b\x03\x02\x02\x02\x0b\x0c\x03\x02\x02\x02\x0c\x0d\
-	\x07\x04\x02\x02\x0d\x1a\x05\x02\x02\x02\x0e\x0f\x07\x05\x02\x02\x0f\x10\
-	\x07\x0a\x02\x02\x10\x11\x07\x06\x02\x02\x11\x12\x05\x02\x02\x02\x12\x13\
-	\x07\x07\x02\x02\x13\x14\x05\x02\x02\x04\x14\x1a\x03\x02\x02\x02\x15\x16\
-	\x07\x08\x02\x02\x16\x17\x05\x02\x02\x02\x17\x18\x07\x09\x02\x02\x18\x1a\
-	\x03\x02\x02\x02\x19\x04\x03\x02\x02\x02\x19\x06\x03\x02\x02\x02\x19\x0e\
-	\x03\x02\x02\x02\x19\x15\x03\x02\x02\x02\x1a\x1f\x03\x02\x02\x02\x1b\x1c\
-	\x0c\x05\x02\x02\x1c\x1e\x05\x02\x02\x06\x1d\x1b\x03\x02\x02\x02\x1e\x21\
-	\x03\x02\x02\x02\x1f\x1d\x03\x02\x02\x02\x1f\x20\x03\x02\x02\x02\x20\x03\
-	\x03\x02\x02\x02\x21\x1f\x03\x02\x02\x02\x05\x0a\x19\x1f";
+	\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x03\x02\x05\x02\
+	\x1b\x0a\x02\x03\x02\x03\x02\x07\x02\x1f\x0a\x02\x0c\x02\x0e\x02\x22\x0b\
+	\x02\x03\x02\x02\x03\x02\x03\x02\x02\x02\x02\x28\x02\x1a\x03\x02\x02\x02\
+	\x04\x05\x08\x02\x01\x02\x05\x1b\x07\x0a\x02\x02\x06\x08\x07\x03\x02\x02\
+	\x07\x09\x07\x0a\x02\x02\x08\x07\x03\x02\x02\x02\x09\x0a\x03\x02\x02\x02\
+	\x0a\x08\x03\x02\x02\x02\x0a\x0b\x03\x02\x02\x02\x0b\x0c\x03\x02\x02\x02\
+	\x0c\x0d\x07\x04\x02\x02\x0d\x1b\x05\x02\x02\x02\x0e\x0f\x07\x05\x02\x02\
+	\x0f\x10\x07\x0a\x02\x02\x10\x11\x07\x06\x02\x02\x11\x12\x05\x02\x02\x02\
+	\x12\x13\x07\x07\x02\x02\x13\x14\x05\x02\x02\x05\x14\x1b\x03\x02\x02\x02\
+	\x15\x16\x07\x08\x02\x02\x16\x17\x05\x02\x02\x02\x17\x18\x07\x09\x02\x02\
+	\x18\x1b\x03\x02\x02\x02\x19\x1b\x07\x02\x02\x03\x1a\x04\x03\x02\x02\x02\
+	\x1a\x06\x03\x02\x02\x02\x1a\x0e\x03\x02\x02\x02\x1a\x15\x03\x02\x02\x02\
+	\x1a\x19\x03\x02\x02\x02\x1b\x20\x03\x02\x02\x02\x1c\x1d\x0c\x06\x02\x02\
+	\x1d\x1f\x05\x02\x02\x07\x1e\x1c\x03\x02\x02\x02\x1f\x22\x03\x02\x02\x02\
+	\x20\x1e\x03\x02\x02\x02\x20\x21\x03\x02\x02\x02\x21\x03\x03\x02\x02\x02\
+	\x22\x20\x03\x02\x02\x02\x05\x0a\x1a\x20";
 

@@ -70,4 +70,17 @@ fn enter_let(&mut self, _ctx: &LetContext<'input>) { }
  */
 fn exit_let(&mut self, _ctx: &LetContext<'input>) { }
 
+/**
+ * Enter a parse tree produced by the {@code eof}
+ * labeled alternative in {@link LambdaCalculusParser#term}.
+ * @param ctx the parse tree
+ */
+fn enter_eof(&mut self, _ctx: &EofContext<'input>) { }
+/**
+ * Exit a parse tree produced by the {@code eof}
+ * labeled alternative in {@link LambdaCalculusParser#term}.
+ * @param ctx the parse tree
+ */
+fn exit_eof(&mut self, _ctx: &EofContext<'input>) { }
+
 }

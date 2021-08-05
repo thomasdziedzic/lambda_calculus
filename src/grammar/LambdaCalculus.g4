@@ -6,6 +6,7 @@ term
     | left=term right=term #application
     | 'let' variable=VARIABLE '=' assignment=term 'in' body=term #let
     | '(' inner=term ')' #parens
+    | EOF #eof // HACK move this into a start terminal like start : term EOF;
     ;
 
 VARIABLE : [a-zA-Z0-9_]+;
