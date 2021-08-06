@@ -1,0 +1,6 @@
+(λa b c d e f g h i j k l m n o p q r s t u v w x y z cons nil.
+   CONS cons nil h
+  (CONS cons nil e
+  (CONS cons nil l
+  (CONS cons nil l
+  (CONS cons nil o (NIL cons nil)))))) a b c d e f g h i j k l m n o p q r s t u v w x y z cons nil
