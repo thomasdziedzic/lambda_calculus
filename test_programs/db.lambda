@@ -1,0 +1,24 @@
+(* database functions *)
+
+let EMPTY = NIL in
+let INSERT = CONS in
+(*
+let DELETE = λ to_delete table cons nil. in
+let UPDATE = _ in
+*)
+let SELECT = λ term table cons nil.
+
+(*
+
+match table {
+  NIL => NIL,
+  CONS x rest => if term == x
+                  then CONS x (SELECT term rest cons nil)
+                  else (SELECT term rest cons nil)
+}
+
+*)
+
+in
+
+λ a.SELECT a (INSERT a EMPTY)

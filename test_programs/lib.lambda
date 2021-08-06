@@ -8,8 +8,8 @@ let AND = λp q.p q p in
 
 let i_comb = λx.x in
 let k_comb = λx y.x in
-let s_comb = λx y z.(x z) (y z) in
-let y_comb = λg.((λx.(g (x x))) (λx.(g (x x)))) in
+let s_comb = λx y z.x z (y z) in
+let y_comb = λg.(λx.g (x x)) (λx.g (x x)) in
 
 (* church numerals *)
 

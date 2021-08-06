@@ -9,6 +9,7 @@ Next Steps:
   - [x] investigate parsing algorithms and choose one that supports left recursion
   - [x] make abstraction right associative so that we don't need parens around abstractions
   - [x] make application left associative so that we don't need parens around applications
+  - [ ] can we implement a simple db in the lambda calculus?
 [ ] lambda cube
   - [ ] λ→
   - [ ] λ2

@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn it_evaluates_the_s_combinator() {
-        let output = eval(String::from("(λx y z.(x z) (y z)) a b c"));
+        let output = eval(String::from("(λx y z.x z (y z)) a b c"));
         assert_eq!(output, String::from("((a(unbound) c(unbound)) (b(unbound) c(unbound)))"));
     }
 
